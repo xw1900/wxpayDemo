@@ -1,4 +1,4 @@
-package com.xw.wxpay.utils;
+package com.xw.wxpay.business;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -18,10 +18,25 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.xw.wxpay.bean.AuthToken;
+import com.xw.wxpay.bean.WxPaySendData;
+import com.xw.wxpay.global.WxPayConstant;
+import com.xw.wxpay.utils.WxPayUtils;
 
-public class WxPay {
+public class WxPayBusiness {
 
-//	public static Logger LOG = LoggerFactory.getLogger(WxPay.class);
+	private WxPayBusiness(){}
+	public static class WxPayInstance {
+		private static WxPayBusiness wxPayBusiness = new WxPayBusiness();
+		public static WxPayBusiness getWxPayBusiness() {
+			return wxPayBusiness;
+		}
+	}
+	public static WxPayBusiness self() {
+		return WxPayInstance.getWxPayBusiness();
+	}
+	
+//	public static Logger LOG = LoggerFactory.getLogger(WxPayBusiness.class);
 	
 	/**
 	 * 授权
@@ -29,7 +44,7 @@ public class WxPay {
 	 * @param ordId
 	 * @throws Exception
 	 */
-	public static void authorize(HttpServletResponse response, Long ordId) throws Exception {
+	public void authorize(HttpServletResponse response, Long ordId) throws Exception {
 		String backUri = WxPayConstant.AFTER_AUTHORIZE_RETURN_URL + "?ordId=" + ordId;
 		String state = UUID.randomUUID().toString().trim().replaceAll("-", "");
 
@@ -52,12 +67,12 @@ public class WxPay {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map<String, String> unifiedOrderBusiness(Map<String, String> map, HttpServletRequest request) throws Exception {
+	public Map<String, String> unifiedOrderBusiness(Map<String, String> map, HttpServletRequest request) throws Exception {
 		
 		Map<String, String> result = Maps.newHashMap();
 		
 		// 获取统一下单后的参数
-		Map<String, String> resultMap = WxPay.unifiedOrder(map, request);
+		Map<String, String> resultMap = unifiedOrder(map, request);
 
 		if (null == resultMap) {
 //			LOG.error("微信统一下单失败，resultMap空，订单编号:" + map.get("OutTradeNo"));
@@ -97,7 +112,7 @@ public class WxPay {
 		return result;
 	}
 	
-	public static SortedMap<String,String> paySuccess(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public SortedMap<String,String> paySuccess(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		String xmlResult = "";
 		try {
@@ -156,7 +171,7 @@ public class WxPay {
 		return resultMap;
 	}
 	
-	private static AuthToken getAccessToken(HttpServletRequest request) throws Exception {
+	private AuthToken getAccessToken(HttpServletRequest request) throws Exception {
 		// 用户同意授权，获得的code
 		String code = request.getParameter("code");
 
@@ -177,7 +192,7 @@ public class WxPay {
 		return authToken;
 	}
 	
-	private static AuthToken getTokenByAuthCode(String code) throws Exception {
+	private AuthToken getTokenByAuthCode(String code) throws Exception {
 		AuthToken authToken;
 		StringBuilder json = new StringBuilder();
 
@@ -201,9 +216,9 @@ public class WxPay {
 	 * @return
 	 * @throws Exception 
 	 */
-	private static Map<String, String> unifiedOrder(Map<String, String> map, HttpServletRequest request) throws Exception {
+	private Map<String, String> unifiedOrder(Map<String, String> map, HttpServletRequest request) throws Exception {
 
-		AuthToken authToken = WxPay.getAccessToken(request);
+		AuthToken authToken = getAccessToken(request);
 		
 		Map<String, String> resultMap = null;
 		try {
@@ -259,7 +274,7 @@ public class WxPay {
 	 * @param data
 	 * @return SortedMap<String,Object>
 	 */
-	private static SortedMap<String, String> buildParamMap(WxPaySendData data) {
+	private SortedMap<String, String> buildParamMap(WxPaySendData data) {
 		SortedMap<String, String> paramters = new TreeMap<String, String>();
 		if (null != data) {
 			if (StringUtils.isNotEmpty(data.getAppId())) {

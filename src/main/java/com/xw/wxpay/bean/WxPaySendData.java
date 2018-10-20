@@ -1,4 +1,4 @@
-package com.xw.wxpay.utils;
+package com.xw.wxpay.bean;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

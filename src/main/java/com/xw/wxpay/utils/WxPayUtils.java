@@ -23,6 +23,8 @@ import com.google.common.collect.Maps;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
+import com.xw.wxpay.bean.WxPaySendData;
+import com.xw.wxpay.global.WxPayConstant;
 
 public class WxPayUtils {
 

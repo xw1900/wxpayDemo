@@ -1,4 +1,4 @@
-package com.xw.wxpay.utils;
+package com.xw.wxpay.bean;
 
 import java.io.Serializable;
 

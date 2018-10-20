@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.collect.Maps;
-import com.xw.wxpay.utils.WxPay;
+import com.xw.wxpay.business.WxPayBusiness;
 
 /**
  * 微信支付
@@ -38,7 +38,7 @@ public class PayController {
 //			throw new BusinessException(400002);
 //		}
 
-		WxPay.authorize(response, ordId);
+		WxPayBusiness.self().authorize(response, ordId);
 		return null;
 	}
 	
@@ -58,7 +58,7 @@ public class PayController {
 		map.put("OutTradeNo", id + "");
 
 		// 获取统一下单后的参数
-		Map<String, String> result = WxPay.unifiedOrderBusiness(map, request);
+		Map<String, String> result = WxPayBusiness.self().unifiedOrderBusiness(map, request);
 
 		model.addAttribute("appId", result.get("appId"));
 		model.addAttribute("timeStamp", result.get("timeStamp"));
@@ -79,7 +79,7 @@ public class PayController {
 	public String weixinReceive(HttpServletRequest request, HttpServletResponse response) throws Exception {
 //		LOG.info("微信支付回调begin。");
 		
-		SortedMap<String, String> map = WxPay.paySuccess(request, response);
+		SortedMap<String, String> map = WxPayBusiness.self().paySuccess(request, response);
 		if ("success".equals(map.get("success"))) {
 			handlePayBusiness(map);
 		} else {
