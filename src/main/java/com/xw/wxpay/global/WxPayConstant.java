@@ -1,6 +1,6 @@
 package com.xw.wxpay.global;
 
-public class WxPayConstant {
+public interface WxPayConstant {
 
     /******************************需要客户配置项******************************/
     // 基础回调
